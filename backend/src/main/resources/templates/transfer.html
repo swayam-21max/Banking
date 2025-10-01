@@ -12,8 +12,6 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/account}">Account</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/transactions}">Transactions</a></li>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" th:href="@{/logout}">Logout</a></li>
@@ -25,18 +23,24 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Transfer Money</h5>
+            <h6 class="card-subtitle mb-3 text-muted">From Account: <span th:text="${fromAccountId}"></span></h6>
+            
             <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            
             <form th:action="@{/transfer}" method="post">
+                <input type="hidden" name="fromAccountId" th:value="${fromAccountId}" />
+
                 <div class="mb-3">
-                    <label for="toAccountId" class="form-label">To Account</label>
-                    <input type="number" class="form-control" id="toAccountId" name="toAccountId">
+                    <label for="toAccountId" class="form-label">To Account ID</label>
+                    <input type="number" class="form-control" id="toAccountId" name="toAccountId" required>
                 </div>
                 <div class="mb-3">
                     <label for="amount" class="form-label">Amount</label>
-                    <input type="number" step="0.01" class="form-control" id="amount" name="amount">
+                    <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Transfer</button>
+                <a th:href="@{/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
             </form>
         </div>
     </div>

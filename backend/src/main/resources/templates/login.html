@@ -12,14 +12,20 @@
             <div class="card mt-5">
                 <div class="card-body">
                     <h3 class="card-title text-center">Login</h3>
+                    <!-- Display error message if login fails -->
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        Invalid email or password.
+                    </div>
                     <form th:action="@{/login}" method="post">
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username">
+                            <!-- MODIFIED: Label changed to Email -->
+                            <label for="email" class="form-label">Email</label>
+                            <!-- MODIFIED: type, id, and name changed to email -->
+                            <input type="email" class="form-control" id="email" name="email" required autofocus>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password">
+                            <input type="password" class="form-control" id="password" name="password" required>
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Login</button>

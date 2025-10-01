@@ -42,6 +42,7 @@ public class SecurityConfig {
             )
             .formLogin(form -> form
                 .loginPage("/login") // Custom login page URL
+                .usernameParameter("email") // THIS LINE IS ADDED
                 .defaultSuccessUrl("/dashboard", true) // Redirect here after successful login
                 .permitAll()
             )
@@ -54,4 +55,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
