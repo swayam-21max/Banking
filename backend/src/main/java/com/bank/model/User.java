@@ -18,6 +18,10 @@ public class User {
 
     private String password;
 
+    // This field is for registration form validation only
+    @Transient
+    private String confirmPassword;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> accounts;
 
@@ -32,6 +36,10 @@ public class User {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    // Getter and Setter for the transient confirmPassword field
+    public String getConfirmPassword() { return confirmPassword; }
+    public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
 
     public List<Account> getAccounts() { return accounts; }
     public void setAccounts(List<Account> accounts) { this.accounts = accounts; }
