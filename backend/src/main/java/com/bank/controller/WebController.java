@@ -31,18 +31,65 @@ public class WebController {
         return "dashboard";
     }
 
-    // --- ADD THIS NEW METHOD ---
-    /**
-     * Handles the creation of a new bank account for the logged-in user.
-     */
     @PostMapping("/account/create")
     public String createAccount(Principal principal) {
         User user = bankService.getUserByEmail(principal.getName());
         bankService.createAccount(user);
         return "redirect:/dashboard";
     }
-    // -------------------------
 
+    @GetMapping("/deposit")
+    public String showDepositForm(@RequestParam("accountId") Long accountId, Model model) {
+        model.addAttribute("accountId", accountId);
+        return "deposit";
+    }
+
+    @PostMapping("/deposit")
+    public String processDeposit(@RequestParam("accountId") Long accountId,
+                                 @RequestParam("amount") BigDecimal amount,
+                                 Principal principal,
+                                 Model model) {
+        try {
+            User user = bankService.getUserByEmail(principal.getName());
+            boolean isOwner = user.getAccounts().stream().anyMatch(acc -> acc.getId().equals(accountId));
+            if (!isOwner) {
+                throw new IllegalAccessException("Access Denied.");
+            }
+            bankService.deposit(accountId, amount);
+            model.addAttribute("message", "Deposit successful!");
+        } catch (Exception e) {
+            model.addAttribute("error", "Deposit failed: " + e.getMessage());
+        }
+        model.addAttribute("accountId", accountId);
+        return "deposit";
+    }
+
+    @GetMapping("/withdraw")
+    public String showWithdrawForm(@RequestParam("accountId") Long accountId, Model model) {
+        model.addAttribute("accountId", accountId);
+        return "withdraw";
+    }
+
+    @PostMapping("/withdraw")
+    public String processWithdraw(@RequestParam("accountId") Long accountId,
+                                  @RequestParam("amount") BigDecimal amount,
+                                  Principal principal,
+                                  Model model) {
+        try {
+            User user = bankService.getUserByEmail(principal.getName());
+            boolean isOwner = user.getAccounts().stream().anyMatch(acc -> acc.getId().equals(accountId));
+            if (!isOwner) {
+                throw new IllegalAccessException("Access Denied.");
+            }
+            bankService.withdraw(accountId, amount);
+            model.addAttribute("message", "Withdrawal successful!");
+        } catch (Exception e) {
+            model.addAttribute("error", "Withdrawal failed: " + e.getMessage());
+        }
+        model.addAttribute("accountId", accountId);
+        return "withdraw";
+    }
+    
     @GetMapping("/account")
     public String accountDetails(@RequestParam("id") Long accountId, Model model, Principal principal) {
         User user = bankService.getUserByEmail(principal.getName());
@@ -102,3 +149,4 @@ public class WebController {
         return "transfer";
     }
 }
+

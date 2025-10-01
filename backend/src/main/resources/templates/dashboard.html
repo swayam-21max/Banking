@@ -27,15 +27,24 @@
     <div class="row">
         <!-- Loop through each of the user's accounts -->
         <div class="col-md-6 col-lg-4 mb-4" th:each="account : ${accounts}">
-            <div class="card">
-                <div class="card-body">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Account Number: <span th:text="${account.id}"></span></h5>
                     <p class="card-text">Current Balance:</p>
                     <h3 class="card-text" th:text="${'$' + #numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}"></h3>
                     <hr>
-                    <a th:href="@{/account(id=${account.id})}" class="btn btn-primary btn-sm">Details</a>
-                    <a th:href="@{/transactions(accountId=${account.id})}" class="btn btn-info btn-sm">Transactions</a>
-                    <a th:href="@{/transfer(fromAccountId=${account.id})}" class="btn btn-success btn-sm">Transfer</a>
+                    <!-- Buttons are grouped and take full width for a cleaner look -->
+                    <div class="mt-auto">
+                        <a th:href="@{/account(id=${account.id})}" class="btn btn-secondary btn-sm mb-2 d-block">Details</a>
+                        <a th:href="@{/transactions(accountId=${account.id})}" class="btn btn-info btn-sm mb-2 d-block">Transactions</a>
+                        <hr>
+                        <!-- Deposit, Withdraw, and Transfer Buttons -->
+                        <div class="d-flex justify-content-between">
+                           <a th:href="@{/deposit(accountId=${account.id})}" class="btn btn-success btn-sm flex-grow-1 me-1">Deposit</a>
+                           <a th:href="@{/withdraw(accountId=${account.id})}" class="btn btn-warning btn-sm flex-grow-1 ms-1">Withdraw</a>
+                        </div>
+                         <a th:href="@{/transfer(fromAccountId=${account.id})}" class="btn btn-primary btn-sm mt-2 d-block">Transfer</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -43,7 +52,6 @@
         <!-- This block will only be shown if the accounts list is empty -->
         <div th:if="${accounts.isEmpty()}" class="col-12">
              <div class="alert alert-info">You don't have any accounts yet.</div>
-             <!-- Add the create account form and button -->
              <form th:action="@{/account/create}" method="post" class="mt-3">
                 <button type="submit" class="btn btn-primary">Create a New Account</button>
              </form>
@@ -52,3 +60,4 @@
 </div>
 </body>
 </html>
+
