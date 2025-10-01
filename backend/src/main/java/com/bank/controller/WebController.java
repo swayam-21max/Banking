@@ -23,9 +23,6 @@ public class WebController {
     @Autowired
     private BankService bankService;
 
-    /**
-     * Displays the main dashboard, showing a list of all the user's accounts.
-     */
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal) {
         User user = bankService.getUserByEmail(principal.getName());
@@ -34,10 +31,18 @@ public class WebController {
         return "dashboard";
     }
 
+    // --- ADD THIS NEW METHOD ---
     /**
-     * Shows details for a specific account.
-     * Includes a crucial security check to ensure the requested account belongs to the logged-in user.
+     * Handles the creation of a new bank account for the logged-in user.
      */
+    @PostMapping("/account/create")
+    public String createAccount(Principal principal) {
+        User user = bankService.getUserByEmail(principal.getName());
+        bankService.createAccount(user);
+        return "redirect:/dashboard";
+    }
+    // -------------------------
+
     @GetMapping("/account")
     public String accountDetails(@RequestParam("id") Long accountId, Model model, Principal principal) {
         User user = bankService.getUserByEmail(principal.getName());
@@ -50,31 +55,22 @@ public class WebController {
         return "account";
     }
 
-    /**
-     * Displays the list of transactions for a specific, user-owned account.
-     */
     @GetMapping("/transactions")
     public String transactions(@RequestParam("accountId") Long accountId, Model model, Principal principal) {
         User user = bankService.getUserByEmail(principal.getName());
-        // Security Check: Verify the user owns this account before fetching transactions.
         boolean isOwner = user.getAccounts().stream().anyMatch(acc -> acc.getId().equals(accountId));
         if (!isOwner) {
-            // Or redirect to an error page
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
 
         List<TransactionEntity> transactions = bankService.getTransactions(accountId);
         model.addAttribute("transactions", transactions);
-        model.addAttribute("accountId", accountId); // Pass accountId to the view
+        model.addAttribute("accountId", accountId);
         return "transactions";
     }
     
-    /**
-     * Shows the transfer form.
-     */
     @GetMapping("/transfer")
     public String showTransferForm(@RequestParam("fromAccountId") Long fromAccountId, Model model, Principal principal) {
-        // Security check to ensure the "from" account belongs to the user
         User user = bankService.getUserByEmail(principal.getName());
         boolean isOwner = user.getAccounts().stream().anyMatch(acc -> acc.getId().equals(fromAccountId));
         if (!isOwner) {
@@ -84,9 +80,6 @@ public class WebController {
         return "transfer";
     }
 
-    /**
-     * Processes a fund transfer from one of the user's accounts to another account.
-     */
     @PostMapping("/transfer")
     public String processTransfer(@RequestParam("fromAccountId") Long fromAccountId,
                                   @RequestParam("toAccountId") Long toAccountId,
@@ -95,7 +88,6 @@ public class WebController {
                                   Model model) {
         try {
             User user = bankService.getUserByEmail(principal.getName());
-            // Security Check: Verify the user owns the source account.
             boolean isOwner = user.getAccounts().stream().anyMatch(acc -> acc.getId().equals(fromAccountId));
             if (!isOwner) {
                 throw new IllegalAccessException("You do not have permission to transfer from this account.");
@@ -106,7 +98,6 @@ public class WebController {
         } catch (Exception e) {
             model.addAttribute("error", "Transfer failed: " + e.getMessage());
         }
-        // Return the user to the transfer form, showing the success/error message
         model.addAttribute("fromAccountId", fromAccountId);
         return "transfer";
     }
