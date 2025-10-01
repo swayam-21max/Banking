@@ -1,0 +1,38 @@
+# IDE and editor files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Build artifacts and compiled output
+/backend/target/
+/frontend/build/
+
+# Dependencies
+/frontend/node_modules/
+
+# Log files
+*.log
+npm-debug.log*
+yarn-error.log
+yarn-debug.log
+
+# Local environment variables (IMPORTANT for security)
+.env
+.env.local
+.env.*.local
+!/.env.example
+
+# Maven release files
+release.properties
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.tag
+
+# Operating System files
+.DS_Store
+Thumbs.db
